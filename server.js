@@ -6,6 +6,10 @@ const contenedor = new Contenedor('products.json');
 
 const port = 8080;
 
+const getRandom = (max, min) => {
+    return Math.round(Math.random() * (max - min) + min);
+};
+
 //Inicio
 const indexPath = '/';
 const indexCallBack = (request, response, next) => {
@@ -29,9 +33,6 @@ const randomPath = '/productoRandom';
 server.get(randomPath, async (req, res) => {
     const productos = await contenedor.getAll();
 
-    const getRandom = (max, min) => {
-        return Math.round(Math.random() * (max - min) + min);
-    };
     let randomId = getRandom(productos.length, 1);
 
     const randomProduct = await contenedor.getById(randomId);
