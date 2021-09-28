@@ -6,50 +6,36 @@ const contenedor = new Contenedor('products.json');
 
 const port = 8080;
 
-const getRandom = (max, min) => {
-    return Math.round(Math.random() * (max - min) + min);
+const getRandom = (max) => {
+    return Math.floor(Math.random() * (max));
 };
 
 //Inicio
-const indexPath = '/';
-const indexCallBack = (request, response, next) => {
-    response.send('<h1>Bienvenido</h1>');
-}
-server.get(indexPath, indexCallBack);
+server.get('/', (req, res) => {
+    res.send('<h1>Bienvenido</h1>');
+});
 
 
 //Productos
-const productsPath = '/productos';
-
-server.get(productsPath, async (req, res) => {
+server.get('/productos', async (req, res) => {
     const productos = await contenedor.getAll();
     res.json(productos);
 });
 
 
 //Producto Random
-const randomPath = '/productoRandom';
-
-server.get(randomPath, async (req, res) => {
+server.get('/productoRandom', async (req, res) => {
     const productos = await contenedor.getAll();
-
-    let randomId = getRandom(productos.length, 1);
-
-    const randomProduct = await contenedor.getById(randomId);
-    res.json(randomProduct);
+    let random = getRandom(productos.length);
+    res.json(productos[random]);
 });
 
 
 //Correr API
-const runCallBack = () => {
+const app = server.listen(port, () => {
     console.log(`Servidor corriendo en ${port}`);
-}
-server.listen(port, runCallBack);
+});
 
-
-//Error
-const error = 'error';
-const errorCallBack = (error) => {
-    console.log('Error en servidor:', error)
-}
-server.on(error, errorCallBack);
+app.on('error', (error) => {
+    console.log(`Error en servidor del tipo ${error}`)
+});
